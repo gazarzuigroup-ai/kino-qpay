@@ -13,6 +13,8 @@ router.get('/', (_req, res) => {
 
   const cards = movies.map((m) => {
     const thumb = `https://${process.env.BUNNY_CDN_HOSTNAME}/${m.bunny_video_id}/thumbnail.jpg`;
+    const description = m.description ? `<div class="desc">${escapeHtml(m.description)}</div>` : '';
+    const duration = m.duration ? `<div class="meta">⏱ ${escapeHtml(m.duration)}</div>` : '';
     return `
       <a class="card" href="/buy/${m.slug}">
         <div class="poster" style="background-image:url('${thumb}')">
@@ -20,6 +22,8 @@ router.get('/', (_req, res) => {
         </div>
         <div class="info">
           <div class="title">${escapeHtml(m.title)}</div>
+          ${duration}
+          ${description}
           <div class="buy">🛒 Худалдаж авах</div>
         </div>
       </a>`;
@@ -47,10 +51,14 @@ router.get('/', (_req, res) => {
           position:relative}
   .badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);color:#4ade80;
          padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;backdrop-filter:blur(6px)}
-  .info{padding:10px 12px 12px}
-  .title{font-size:14px;font-weight:600;margin-bottom:6px;line-height:1.3;
+  .info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
+  .title{font-size:14px;font-weight:600;line-height:1.3;
          display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .buy{font-size:11px;color:#4ade80;font-weight:500}
+  .meta{font-size:11px;color:#888}
+  .desc{font-size:11.5px;color:#a8b0c0;line-height:1.4;
+        display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+        margin-bottom:4px}
+  .buy{font-size:11px;color:#4ade80;font-weight:500;margin-top:auto}
   .empty{background:#141a2a;border-radius:12px;padding:40px;text-align:center;color:#888}
   .footer{margin-top:32px;text-align:center;color:#666;font-size:12px}
   .footer a{color:#888;text-decoration:none}

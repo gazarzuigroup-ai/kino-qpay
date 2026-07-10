@@ -17,6 +17,13 @@ const dbPath = path.join(dataDir, 'kino.db');
 export const db = new DatabaseSync(dbPath);
 db.exec('PRAGMA journal_mode = WAL');
 
+// Хуучин DB-т description/duration багана байхгүй бол нэмнэ (migration)
+try {
+  const cols = db.prepare('PRAGMA table_info(movies)').all().map((c) => c.name);
+  if (!cols.includes('description')) db.exec("ALTER TABLE movies ADD COLUMN description TEXT DEFAULT ''");
+  if (!cols.includes('duration')) db.exec("ALTER TABLE movies ADD COLUMN duration TEXT DEFAULT ''");
+} catch {}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,6 +39,8 @@ db.exec(`
     title TEXT NOT NULL,
     price INTEGER NOT NULL,
     bunny_video_id TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    duration TEXT DEFAULT '',
     active INTEGER DEFAULT 1
   );
 

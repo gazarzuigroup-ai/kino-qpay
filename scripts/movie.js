@@ -49,10 +49,12 @@ function update() {
   }));
   const sets = [];
   const args = [];
-  if (opts.title)  { sets.push('title = ?');          args.push(opts.title); }
-  if (opts.price)  { sets.push('price = ?');          args.push(Number(opts.price)); }
-  if (opts.bunny)  { sets.push('bunny_video_id = ?'); args.push(opts.bunny); }
-  if (opts.active) { sets.push('active = ?');        args.push(Number(opts.active)); }
+  if (opts.title)   { sets.push('title = ?');          args.push(opts.title); }
+  if (opts.price)   { sets.push('price = ?');          args.push(Number(opts.price)); }
+  if (opts.bunny)   { sets.push('bunny_video_id = ?'); args.push(opts.bunny); }
+  if (opts.active)  { sets.push('active = ?');         args.push(Number(opts.active)); }
+  if (opts.desc)    { sets.push('description = ?');    args.push(opts.desc); }
+  if (opts.duration){ sets.push('duration = ?');       args.push(opts.duration); }
   if (sets.length === 0) return console.error('Юу ч зааж өгөөгүй байна');
   args.push(slug);
   const info = db.prepare(`UPDATE movies SET ${sets.join(', ')} WHERE slug = ?`).run(...args);
