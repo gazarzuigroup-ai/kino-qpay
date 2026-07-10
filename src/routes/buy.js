@@ -82,14 +82,14 @@ function baseStyle() {
       .price{color:#4ade80;font-size:24px;font-weight:700;margin:8px 0 20px}
       .qr-wrap{background:#fff;border-radius:12px;padding:10px;display:flex;justify-content:center;margin:12px auto;max-width:220px}
       .qr-wrap img{max-width:200px;width:100%;height:auto;display:block}
-      .banks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
-      .bank{background:#1c2438;border-radius:12px;padding:12px 12px;text-decoration:none;color:#eee;
-            display:flex;align-items:center;gap:12px;
-            font-size:13px;font-weight:500;line-height:1.2}
+      .banks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0}
+      .bank{background:#1c2438;border-radius:10px;padding:10px 8px;text-decoration:none;color:#eee;
+            display:flex;flex-direction:column;align-items:center;gap:6px;
+            font-size:11.5px;font-weight:500;line-height:1.2;text-align:center}
       .bank:hover{background:#243052}
       .bank:active{transform:scale(.98)}
-      .bank img{width:40px;height:40px;object-fit:contain;border-radius:9px;background:#fff;padding:4px;flex-shrink:0}
-      .bank span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;color:#dfe4f0}
+      .bank img{width:32px;height:32px;object-fit:contain;border-radius:7px;background:#fff;padding:3px}
+      .bank span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;color:#dfe4f0}
       .divider{text-align:center;color:#666;font-size:12px;margin:16px 0;position:relative}
       .divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:#2a3348}
       .divider::before{left:0}.divider::after{right:0}
