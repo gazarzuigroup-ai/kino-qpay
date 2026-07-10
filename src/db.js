@@ -1,9 +1,18 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = path.join(__dirname, '..', 'data', 'kino.db');
+// DATA_DIR env-с хамжаагаад тохируулж болно (Railway volume mount-т ашиглана)
+const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
+
+// Хавтас байхгүй бол үүсгэнэ (эхний удаа Railway-т эсвэл шинэ instance-т)
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const dbPath = path.join(dataDir, 'kino.db');
 
 export const db = new DatabaseSync(dbPath);
 db.exec('PRAGMA journal_mode = WAL');
