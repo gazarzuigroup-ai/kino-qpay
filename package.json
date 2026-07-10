@@ -5,10 +5,11 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node scripts/seed.js && node src/server.js",
     "dev": "node --watch src/server.js",
     "movie": "node scripts/movie.js",
-    "debug": "node scripts/debug.js"
+    "debug": "node scripts/debug.js",
+    "seed": "node scripts/seed.js"
   },
   "engines": {
     "node": ">=24.0.0"
