@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db.js';
+import { bunnyThumbUrl } from '../utils/tokens.js';
 
 const router = Router();
 
@@ -12,7 +13,7 @@ router.get('/', (_req, res) => {
   const movies = db.prepare('SELECT * FROM movies WHERE active = 1 ORDER BY id DESC').all();
 
   const cards = movies.map((m) => {
-    const thumb = `https://${process.env.BUNNY_CDN_HOSTNAME}/${m.bunny_video_id}/thumbnail.jpg`;
+    const thumb = bunnyThumbUrl(m.bunny_video_id);
     const description = m.description ? `<div class="desc">${escapeHtml(m.description)}</div>` : '';
     const duration = m.duration ? `<div class="meta">⏱ ${escapeHtml(m.duration)}</div>` : '';
     return `

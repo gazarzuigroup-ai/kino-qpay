@@ -15,14 +15,13 @@ export function newSenderInvoiceNo() {
 /**
  * Bunny Stream token-authenticated URL үүсгэнэ.
  * Bunny-ийн Token Authentication багц дараах SHA256 hash-ыг шаарддаг:
- *   sha256(token_key + video_path + expires)
+ *   sha256(token_key + path + expires)
  */
-export function bunnyTokenUrl({ videoId, expiresAt }) {
+function bunnySignedUrl(path, expiresAt) {
   const hostname = process.env.BUNNY_CDN_HOSTNAME;
   const tokenKey = process.env.BUNNY_TOKEN_KEY;
-  const videoPath = `/${videoId}/playlist.m3u8`;
 
-  const hashInput = tokenKey + videoPath + expiresAt;
+  const hashInput = tokenKey + path + expiresAt;
   const hash = crypto
     .createHash('sha256')
     .update(hashInput)
@@ -31,5 +30,18 @@ export function bunnyTokenUrl({ videoId, expiresAt }) {
     .replace(/\//g, '_')
     .replace(/=/g, '');
 
-  return `https://${hostname}${videoPath}?token=${hash}&expires=${expiresAt}`;
+  return `https://${hostname}${path}?token=${hash}&expires=${expiresAt}`;
+}
+
+export function bunnyTokenUrl({ videoId, expiresAt }) {
+  return bunnySignedUrl(`/${videoId}/playlist.m3u8`, expiresAt);
+}
+
+/**
+ * Каталогийн постер зураг — Token Authentication идэвхтэй үед
+ * thumbnail-д мөн гарын үсэг хэрэгтэй. 24 цагийн хугацаатай.
+ */
+export function bunnyThumbUrl(videoId) {
+  const expiresAt = Math.floor(Date.now() / 1000) + 24 * 3600;
+  return bunnySignedUrl(`/${videoId}/thumbnail.jpg`, expiresAt);
 }

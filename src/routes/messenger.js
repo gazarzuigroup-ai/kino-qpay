@@ -2,7 +2,7 @@ import { Router } from 'express';
 import express from 'express';
 import { db, upsertUser, getUserPaidOrdersWithTokens, getUserPendingOrders, markOrderPaid, createWatchToken, getExistingTokenForOrder } from '../db.js';
 import { checkPayment } from '../qpay.js';
-import { newWatchToken } from '../utils/tokens.js';
+import { newWatchToken, bunnyThumbUrl } from '../utils/tokens.js';
 import {
   verifySignature,
   verifyToken,
@@ -145,7 +145,7 @@ async function sendMovieList(psid) {
   const elements = movies.map((m) => ({
     title: m.title,
     subtitle: `💰 ${m.price.toLocaleString()}₮`,
-    image_url: `https://vz-46bd50a9-33b.b-cdn.net/${m.bunny_video_id}/thumbnail.jpg`,
+    image_url: bunnyThumbUrl(m.bunny_video_id),
     buttons: [
       { type: 'postback', title: '🛒 Худалдаж авах', payload: `BUY_${m.slug}` },
       { type: 'postback', title: '🎬 Миний кино', payload: 'MY_MOVIES' },
