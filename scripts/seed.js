@@ -34,6 +34,15 @@ const movies = [
     description: 'Байгалийн гамшигт үзэгдэл нэгэн өдөр амьдралыг эрс өөрчлөх юм.',
     category: 'Хятад кино',
   },
+  {
+    slug: 'hanashgui-husel',
+    title: 'Ханашгүй хүсэл',
+    price: 2000,
+    bunny_video_id: 'db6b8ff1-9a44-47ff-8c19-e72136b060f2',
+    duration: '1ц 22мин',
+    description: 'Хориотой хүслийн эргүүлэгт татагдсан хосын халуун түүх.',
+    category: 'Эротик',
+  },
 ];
 
 const upsert = db.prepare(`
