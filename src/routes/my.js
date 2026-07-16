@@ -1,44 +1,10 @@
 import { Router } from 'express';
-import {
-  getUserPaidOrdersWithTokens,
-  getUserPendingOrders,
-  markOrderPaid,
-  createWatchToken,
-  getExistingTokenForOrder,
-} from '../db.js';
-import { checkPayment } from '../qpay.js';
-import { newWatchToken } from '../utils/tokens.js';
+import { getUserPaidOrdersWithTokens } from '../db.js';
 import { resolveUserId } from '../utils/identity.js';
+import { reconcilePendingOrders } from '../utils/orders.js';
+import { siteNav, siteNavStyle } from '../utils/ui.js';
 
 const router = Router();
-
-/**
- * PENDING захиалгуудыг QPay-ээс шалгаад, төлөгдсөн бол PAID болгож токен үүсгэнэ.
- * Утсаараа банкны апп руу шилжиж төлсөн хэрэглэгч payment page-т эргэж очихгүй тул
- * энд өөрсдөө шалгах шаардлагатай.
- */
-async function reconcilePendingOrders(psid) {
-  const pending = getUserPendingOrders(psid);
-  const ttlSec = Number(process.env.WATCH_TOKEN_TTL_HOURS) * 3600;
-
-  await Promise.all(pending.map(async (o) => {
-    try {
-      const result = await checkPayment(o.qpay_invoice_id);
-      if (result && result.count > 0 && result.paid_amount >= o.amount) {
-        markOrderPaid(o.id);
-        if (!getExistingTokenForOrder(o.id)) {
-          createWatchToken({
-            token: newWatchToken(),
-            orderId: o.id,
-            expiresAt: Math.floor(Date.now() / 1000) + ttlSec,
-          });
-        }
-      }
-    } catch (e) {
-      console.error('reconcile error for order', o.id, e.response?.data || e.message);
-    }
-  }));
-}
 
 /**
  * GET /my-movies?psid=<manychat_user_id>
@@ -100,6 +66,7 @@ function baseStyle() {
     .btn.rebuy{background:transparent;color:#888;border:1px solid #2a3348}
     .empty{background:#141a2a;border-radius:12px;padding:40px 24px;text-align:center;color:#888}
     .empty h2{color:#eee;margin:0 0 8px;font-size:18px}
+    ${siteNavStyle()}
   </style>`;
 }
 
@@ -107,6 +74,7 @@ function listPage(cards) {
   return `<!doctype html><html><head><meta charset="utf-8"><title>Миний авсан кино</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">${baseStyle()}</head>
 <body><div class="container">
+  ${siteNav('my')}
   <h1>🎬 Миний авсан кино</h1>
   ${cards}
 </div></body></html>`;
@@ -116,12 +84,13 @@ function emptyPage() {
   return `<!doctype html><html><head><meta charset="utf-8"><title>Миний кино</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">${baseStyle()}</head>
 <body><div class="container">
+  ${siteNav('my')}
   <h1>🎬 Миний авсан кино</h1>
   <div class="empty">
     <h2>Одоогоор кино авч аваагүй байна</h2>
     <p>Хэрэв та саяхан төлбөр хийсэн бол 30 секундын дараа энэ хуудсыг дахин ачаална уу.</p>
-    <p style="margin-top:20px">Facebook Messenger дээр "кино" гэж бичээд худалдан авалт хийж болно.</p>
-    <button class="btn watch" onclick="location.reload()" style="margin-top:16px">🔄 Дахин шалгах</button>
+    <a class="btn watch" href="/movies" style="margin-top:16px">🎬 Каталогоос кино сонгох</a>
+    <button class="btn rebuy" onclick="location.reload()" style="margin-top:16px;margin-left:8px;cursor:pointer;background:transparent">🔄 Дахин шалгах</button>
   </div>
 </div></body></html>`;
 }

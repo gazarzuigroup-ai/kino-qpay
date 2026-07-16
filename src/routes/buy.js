@@ -10,6 +10,7 @@ import {
 import { createInvoice } from '../qpay.js';
 import { newSenderInvoiceNo } from '../utils/tokens.js';
 import { resolveUserId } from '../utils/identity.js';
+import { reconcilePendingOrders, getOwnedTokensBySlug } from '../utils/orders.js';
 
 const router = Router();
 
@@ -28,6 +29,17 @@ router.get('/:slug', async (req, res) => {
     const movie = getMovieBySlug(slug);
     if (!movie) {
       return res.status(404).send(page('Кино олдсонгүй', 'Хайсан кино байхгүй эсвэл идэвхгүй болсон байна.'));
+    }
+
+    // Аль хэдийн авчихсан бол шинэ нэхэмжлэх үүсгэлгүй шууд үзэх хуудас руу
+    try {
+      await reconcilePendingOrders(String(psid));
+    } catch (e) {
+      console.error('buy reconcile error:', e.message);
+    }
+    const own = getOwnedTokensBySlug(String(psid)).get(slug);
+    if (own) {
+      return res.redirect(`/watch/${own.token}`);
     }
 
     const user = upsertUser(String(psid), '');
@@ -115,6 +127,7 @@ function paymentPage({ order, movie, qrDataUrl, shortUrl, bankButtons }) {
   return `<!doctype html><html><head><meta charset="utf-8"><title>${movie.title} - Төлбөр</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">${baseStyle()}</head>
 <body><div class="card">
+  <a href="/movies" style="color:#888;text-decoration:none;font-size:13px;display:inline-block;margin-bottom:8px">← Каталог руу буцах</a>
   <h1>${movie.title}</h1>
   <div class="price">${movie.price.toLocaleString()}₮</div>
 

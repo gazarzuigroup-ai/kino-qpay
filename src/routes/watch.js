@@ -68,6 +68,7 @@ router.get('/:token', (req, res) => {
   header{padding:12px 16px;background:#111;border-bottom:1px solid #222;
          display:flex;align-items:center;gap:12px}
   h1{margin:0;font-size:15px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .back{color:#4ade80;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap}
   .player-wrap{max-width:1200px;margin:0 auto}
   video{width:100%;height:auto;aspect-ratio:16/9;background:#000;display:block}
   .info{padding:10px 16px;color:#888;font-size:12px;text-align:center;line-height:1.4}
@@ -76,7 +77,7 @@ router.get('/:token', (req, res) => {
 </style>
 </head>
 <body>
-  <header><h1>${order.title}</h1></header>
+  <header><a class="back" href="/my-movies">← Миний кино</a><h1>${order.title}</h1></header>
   <div class="player-wrap">
     <video id="player" controls playsinline webkit-playsinline preload="auto"
            controlsList="nodownload noremoteplayback" disablePictureInPicture

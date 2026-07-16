@@ -32,7 +32,14 @@ export function resolveUserId(req, res) {
     || raw === 'null'
     || raw.length > 128;
 
-  if (!invalid) return raw;
+  if (!invalid) {
+    // Messenger-ээс psid-тэй ирсэн хэрэглэгчийг cookie-д хадгална —
+    // дараа нь браузераасаа psid-гүй орсон ч мөн л энэ хэрэглэгч гэж танина.
+    if (res && req.cookies?.kino_sid !== raw) {
+      res.setHeader('Set-Cookie', `kino_sid=${encodeURIComponent(raw)}; Max-Age=${90 * 24 * 3600}; Path=/; HttpOnly; SameSite=Lax`);
+    }
+    return raw;
+  }
 
   let sid = req.cookies?.kino_sid;
   if (!sid) {
