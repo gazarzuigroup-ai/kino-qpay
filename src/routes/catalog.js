@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 
   const movies = db.prepare('SELECT * FROM movies WHERE active = 1 ORDER BY id DESC').all();
 
-  const cards = movies.map((m) => {
+  const card = (m) => {
     const thumb = bunnyThumbUrl(m.bunny_video_id);
     const description = m.description ? `<div class="desc">${escapeHtml(m.description)}</div>` : '';
     const duration = m.duration ? `<div class="meta">⏱ ${escapeHtml(m.duration)}</div>` : '';
@@ -49,7 +49,24 @@ router.get('/', async (req, res) => {
           ${action}
         </div>
       </a>`;
-  }).join('');
+  };
+
+  // Ангиллаар бүлэглэх (ангилалгүй нь "Бусад" хэсэгт)
+  const groups = new Map();
+  for (const m of movies) {
+    const cat = m.category || 'Бусад';
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat).push(m);
+  }
+
+  const chips = groups.size > 1
+    ? `<div class="chips">${[...groups.keys()].map((cat, i) =>
+        `<a class="chip" href="#cat-${i}">${escapeHtml(cat)}</a>`).join('')}</div>`
+    : '';
+
+  const sections = [...groups.entries()].map(([cat, list], i) => `
+    <h2 class="cat" id="cat-${i}">${escapeHtml(cat)} <span class="count">${list.length}</span></h2>
+    <div class="grid">${list.map(card).join('')}</div>`).join('');
 
   const empty = movies.length === 0
     ? '<div class="empty">Одоогоор кино байхгүй байна.</div>'
@@ -85,6 +102,12 @@ router.get('/', async (req, res) => {
   .buy{font-size:11px;color:#4ade80;font-weight:500;margin-top:auto}
   .buy.watch-now{font-size:12px;font-weight:700}
   .empty{background:#141a2a;border-radius:12px;padding:40px;text-align:center;color:#888}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 8px}
+  .chip{color:#a8b0c0;background:#141a2a;text-decoration:none;font-size:13px;font-weight:600;
+        padding:7px 14px;border-radius:20px;transition:background .15s}
+  .chip:hover{background:#1a2338;color:#eee}
+  .cat{font-size:17px;font-weight:700;margin:26px 4px 12px;scroll-margin-top:12px}
+  .cat .count{color:#666;font-size:13px;font-weight:600;margin-left:4px}
   ${siteNavStyle()}
 </style></head>
 <body>
@@ -92,7 +115,9 @@ router.get('/', async (req, res) => {
     ${siteNav('catalog')}
     <h1>🎬 Кино каталог</h1>
     <div class="subtitle">Хүссэн киногоо сонгож дар</div>
-    <div class="grid">${cards}${empty}</div>
+    ${chips}
+    ${sections}
+    ${empty}
   </div>
 </body></html>`);
 });

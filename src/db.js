@@ -17,11 +17,12 @@ const dbPath = path.join(dataDir, 'kino.db');
 export const db = new DatabaseSync(dbPath);
 db.exec('PRAGMA journal_mode = WAL');
 
-// Хуучин DB-т description/duration багана байхгүй бол нэмнэ (migration)
+// Хуучин DB-т description/duration/category багана байхгүй бол нэмнэ (migration)
 try {
   const cols = db.prepare('PRAGMA table_info(movies)').all().map((c) => c.name);
   if (!cols.includes('description')) db.exec("ALTER TABLE movies ADD COLUMN description TEXT DEFAULT ''");
   if (!cols.includes('duration')) db.exec("ALTER TABLE movies ADD COLUMN duration TEXT DEFAULT ''");
+  if (!cols.includes('category')) db.exec("ALTER TABLE movies ADD COLUMN category TEXT DEFAULT ''");
 } catch {}
 
 db.exec(`

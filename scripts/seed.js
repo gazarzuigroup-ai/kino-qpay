@@ -14,6 +14,7 @@ const movies = [
     bunny_video_id: '00309c56-8e46-4c13-a355-33ee3112816c',
     duration: '1ц 20мин',
     description: 'Хайр, найзлал, эргэлт бүхий сэтгэл хөдөлгөм түүх.',
+    category: 'Эротик',
   },
   {
     slug: 'bayajsan-emegtei',
@@ -22,6 +23,7 @@ const movies = [
     bunny_video_id: '5519852c-8c32-403f-84a4-1ad11f67c005',
     duration: '',
     description: 'Гэр бүлээсээ хаягдаад амьдралын шинэ хуудсыг эргүүлж чадсан эмэгтэйн түүх.',
+    category: 'Хятад кино',
   },
   {
     slug: 'tsunami',
@@ -30,24 +32,26 @@ const movies = [
     bunny_video_id: '3562f622-4ba5-4040-8f60-d5412f0e7ff6',
     duration: '',
     description: 'Байгалийн гамшигт үзэгдэл нэгэн өдөр амьдралыг эрс өөрчлөх юм.',
+    category: 'Хятад кино',
   },
 ];
 
 const upsert = db.prepare(`
-  INSERT INTO movies (slug, title, price, bunny_video_id, description, duration, active)
-  VALUES (?, ?, ?, ?, ?, ?, 1)
+  INSERT INTO movies (slug, title, price, bunny_video_id, description, duration, category, active)
+  VALUES (?, ?, ?, ?, ?, ?, ?, 1)
   ON CONFLICT(slug) DO UPDATE SET
     title = excluded.title,
     price = excluded.price,
     bunny_video_id = excluded.bunny_video_id,
     description = COALESCE(NULLIF(excluded.description, ''), movies.description),
     duration = COALESCE(NULLIF(excluded.duration, ''), movies.duration),
+    category = COALESCE(NULLIF(excluded.category, ''), movies.category),
     active = 1
 `);
 
 for (const m of movies) {
-  upsert.run(m.slug, m.title, m.price, m.bunny_video_id, m.description || '', m.duration || '');
-  console.log(`✓ ${m.title} (${m.slug})`);
+  upsert.run(m.slug, m.title, m.price, m.bunny_video_id, m.description || '', m.duration || '', m.category || '');
+  console.log(`✓ ${m.title} (${m.slug}) — ${m.category || 'ангилалгүй'}`);
 }
 
 const total = db.prepare('SELECT COUNT(*) as c FROM movies WHERE active = 1').get().c;
