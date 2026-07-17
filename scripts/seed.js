@@ -43,6 +43,15 @@ const movies = [
     description: 'Хориотой хүслийн эргүүлэгт татагдсан хосын халуун түүх.',
     category: 'Эротик',
   },
+  {
+    slug: 'uuland-neg-udaa',
+    title: 'Ууланд нэг удаа',
+    price: 3000,
+    bunny_video_id: '09b6a4cb-beb9-4780-8799-16a1621e15ce',
+    duration: '40мин',
+    description: 'Эхнэр нөхөр хөдөө ирээд айлын эхнэр нөхөртэй жаргасан түүх.',
+    category: 'Эротик',
+  },
 ];
 
 const upsert = db.prepare(`
