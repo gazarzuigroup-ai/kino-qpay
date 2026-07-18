@@ -9,6 +9,7 @@ import orderRoutes from './routes/order.js';
 import myRoutes from './routes/my.js';
 import messengerRoutes from './routes/messenger.js';
 import catalogRoutes from './routes/catalog.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -26,6 +27,7 @@ app.use('/my-movies', myRoutes);
 app.use('/movies', catalogRoutes);
 app.use('/watch', watchRoutes);
 app.use('/webhook', messengerRoutes);
+app.use('/admin', adminRoutes);
 
 const port = Number(process.env.PORT || 3000);
 app.listen(port, () => {

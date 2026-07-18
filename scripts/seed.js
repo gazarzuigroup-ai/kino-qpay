@@ -10,7 +10,7 @@ const movies = [
   {
     slug: 'eejiin-naiz',
     title: 'Ээжийн найз',
-    price: 2000,
+    price: 3000,
     bunny_video_id: '00309c56-8e46-4c13-a355-33ee3112816c',
     duration: '1ц 20мин',
     description: 'Ээжийн найз эгчмэд бүсгүйг амталсан түүх.',
@@ -37,7 +37,7 @@ const movies = [
   {
     slug: 'hanashgui-husel',
     title: 'Ханашгүй хүсэл',
-    price: 2000,
+    price: 3000,
     bunny_video_id: 'db6b8ff1-9a44-47ff-8c19-e72136b060f2',
     duration: '1ц 22мин',
     description: 'Хориотой хүслийн эргүүлэгт татагдсан хосын халуун түүх.',
